@@ -153,13 +153,18 @@ defmodule Ecto.ChangesetTest do
       cast(%Post{}, %Post{}, ~w(), ~w(unknown))
     end
 
-    assert_raise ArgumentError, ~r"mixed keys", fn ->
+    assert_raise ArgumentError, ~r"duplicate key", fn ->
       cast(%Post{}, %{"title" => "foo", title: "foo"}, ~w(), ~w(unknown))
     end
 
     assert_raise FunctionClauseError, fn ->
       cast(%Post{}, [], ~w(), ~w(unknown))
     end
+  end
+
+  test "cast/4: works with mixed keys that do not conflict" do
+    changeset = cast(%Post{}, %{"title" => "foo", body: "some content"}, ~w(), ~w())
+    assert changeset.valid?
   end
 
   test "cast/4: works with a changeset as the second argument" do
